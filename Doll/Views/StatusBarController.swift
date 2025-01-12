@@ -43,7 +43,7 @@ class StatusBarController {
         statusBarButton.imagePosition = .imageLeft
         statusBarButton.action = #selector(onIconClicked(sender:))
         statusBarButton.target = self
-        statusBarButton.toolTip = NSLocalizedString("Hold option key ⌥ and click to config", comment: "")
+//        statusBarButton.toolTip = NSLocalizedString("Hold option key ⌥ and click to config", comment: "")
         
         let badge = NSHostingView(rootView: BadgeView(model: badgeModel ))
         badge.setFrameOrigin(NSPoint(x: defaultIconSize, y: 1))
