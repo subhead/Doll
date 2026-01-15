@@ -167,10 +167,6 @@ class StatusBarController {
             return
         }
 
-        let textWidth = (text ?? "")
-            .width(withConstrainedHeight: defaultIconSize, font: .systemFont(ofSize: 14))
-        statusItem.length = defaultIconSize + textWidth
-
         // New notification comes in
         let newText = text ?? ""
 
@@ -199,10 +195,23 @@ class StatusBarController {
         } else {
             let defaultIcon = monitoredAppIcon
             let adjustedIcon = (newText.isEmpty && AppSettings.grayoutIconWhenNothingComing) ? (defaultIcon.grayOut() ?? defaultIcon) : defaultIcon
-            updateBadgeIcon(icon: adjustedIcon)
-            statusItem.length = defaultIconSize + textWidth
             updateBadgeIcon(icon: adjustedIcon, size: CGSize(width: defaultIconSize, height: defaultIconSize))
+
+            // Set title first
             statusItem.button?.title = newText
+
+            // Calculate text width
+            let textWidth = (newText)
+                .width(withConstrainedHeight: defaultIconSize, font: .systemFont(ofSize: 14))
+
+            // Account for NSStatusBarButton's internal spacing between image and title (typically 4-6pt)
+            // macOS 15.2 enforces this spacing more strictly
+            let interElementSpacing: CGFloat = 4
+            statusItem.length = defaultIconSize + interElementSpacing + textWidth
+
+            // Force layout update
+            statusItem.button?.needsLayout = true
+            statusItem.button?.layoutSubtreeIfNeeded()
         }
 
         let newMessageCount = Int(newText) ?? 0
